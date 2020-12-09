@@ -2,7 +2,6 @@ package ru.ridkeim.databaseexample
 
 import android.content.ContentValues
 import android.content.Intent
-import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +10,7 @@ import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.toolbar.*
 import ru.ridkeim.databaseexample.data.HotelContract.GuestEntry
 import ru.ridkeim.databaseexample.data.HotelContract.GuestEntry.Companion
 import ru.ridkeim.databaseexample.data.HotelDbHelper

@@ -11,6 +11,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import kotlinx.android.synthetic.main.content_editor.*
+import kotlinx.android.synthetic.main.toolbar.*
 import ru.ridkeim.databaseexample.data.HotelContract
 import ru.ridkeim.databaseexample.data.HotelDbHelper
 
@@ -24,8 +25,7 @@ class EditorActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_editor)
-        val supportActionBar = supportActionBar
-        Log.d(EditorActivity::class.qualifiedName,"toolbar $supportActionBar")
+        setSupportActionBar(toolbar)
         setupSpinner()
     }
 
@@ -108,6 +108,6 @@ class EditorActivity : AppCompatActivity() {
     }
 
     private fun removeGuest(){
-        
+
     }
 }

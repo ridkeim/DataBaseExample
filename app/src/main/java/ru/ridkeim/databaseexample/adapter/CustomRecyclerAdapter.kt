@@ -37,11 +37,11 @@ class CustomRecyclerAdapter(var cursor : Cursor?) : RecyclerView.Adapter<CustomR
                 val columnIndexAge = it.getColumnIndex(HotelContract.GuestEntry.COLUMN_AGE)
                 val resources = itemView.resources
                 itemView.item_name.text = resources.getString(R.string.item_name,
-                        cursor.getString(columnIndexName))
+                        it.getString(columnIndexName))
                 itemView.item_city.text = resources.getString(R.string.item_city,
-                        cursor.getString(columnIndexCity))
+                        it.getString(columnIndexCity))
                 itemView.item_age.text = resources.getString(R.string.item_age,
-                        cursor.getString(columnIndexAge))
+                        it.getInt(columnIndexAge).toString())
                 itemView.tag = it.getLong(columnIndexId)
                 val gender = when(it.getInt(columnIndexGender)){
                     HotelContract.GuestEntry.GENDER_MALE -> resources.getString(R.string.gender_male)

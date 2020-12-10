@@ -9,6 +9,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.loader.app.LoaderManager
+import androidx.loader.content.CursorLoader
+import androidx.loader.content.Loader
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -18,9 +21,11 @@ import ru.ridkeim.databaseexample.data.HotelContract.GuestEntry
 import ru.ridkeim.databaseexample.data.HotelDbHelper
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor>{
     private lateinit var recyclerAdapter: CustomRecyclerAdapter
     private lateinit var dbHelper : SQLiteOpenHelper
+    private val loaderId = 42
+    private lateinit var loaderManager: LoaderManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -33,10 +38,12 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerAdapter = CustomRecyclerAdapter(null)
         recyclerView.adapter = recyclerAdapter
+        loaderManager = LoaderManager.getInstance(this)
+        loaderManager.initLoader(loaderId, null, this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main,menu)
+        menuInflater.inflate(R.menu.menu_main, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -49,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> {
                 val editorIntent = Intent(this, EditorActivity::class.java).apply {
                     action = EditorActivity.ACTION_EDIT_GUEST
-                    putExtra(EditorActivity.KEY_GUEST_ID,5L)
+                    putExtra(EditorActivity.KEY_GUEST_ID, 5L)
                 }
                 startActivity(editorIntent)
                 return true
@@ -58,20 +65,9 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getCursor() : Cursor{
-        val db = dbHelper.readableDatabase
-        val projection = arrayOf(
-                GuestEntry._ID,
-                GuestEntry.COLUMN_NAME,
-                GuestEntry.COLUMN_CITY,
-                GuestEntry.COLUMN_GENDER,
-                GuestEntry.COLUMN_AGE
-        )
-        return db.query(
-                GuestEntry.TABLE_NAME,
-                projection,
-                null, null, null, null, null
-        )
+    override fun onResume() {
+        super.onResume()
+        loaderManager.getLoader<Cursor>(loaderId)?.forceLoad()
     }
 
     private fun insertTestGuest() {
@@ -82,17 +78,42 @@ class MainActivity : AppCompatActivity() {
         values.put(GuestEntry.COLUMN_GENDER, GuestEntry.GENDER_MALE)
         values.put(GuestEntry.COLUMN_AGE, 7)
         db.insert(GuestEntry.TABLE_NAME, null, values)
-        recyclerAdapter.swapCursor(getCursor())
+        loaderManager.getLoader<Cursor>(loaderId)?.forceLoad()
     }
 
-    override fun onStart() {
-        super.onStart()
-        recyclerAdapter.swapCursor(getCursor())
+    override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
+        return MyCursorLoader(this, dbHelper)
     }
 
-    override fun onStop() {
-        super.onStop()
-        dbHelper.close()
+    override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor) {
+        recyclerAdapter.swapCursor(data)
     }
 
+    override fun onLoaderReset(loader: Loader<Cursor>) {
+        recyclerAdapter.swapCursor(null)
+    }
+
+
+    class MyCursorLoader(context: Context, private val dbHelper: SQLiteOpenHelper) : CursorLoader(context) {
+
+        override fun loadInBackground(): Cursor {
+            return getCursor()
+        }
+
+        private fun getCursor(): Cursor{
+            val db = dbHelper.readableDatabase
+            val projection = arrayOf(
+                    GuestEntry._ID,
+                    GuestEntry.COLUMN_NAME,
+                    GuestEntry.COLUMN_CITY,
+                    GuestEntry.COLUMN_GENDER,
+                    GuestEntry.COLUMN_AGE
+            )
+            return db.query(
+                    GuestEntry.TABLE_NAME,
+                    projection,
+                    null, null, null, null, null
+            )
+        }
+    }
 }

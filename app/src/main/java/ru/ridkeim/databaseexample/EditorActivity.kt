@@ -172,11 +172,11 @@ class EditorActivity : AppCompatActivity() {
             return false
         }
         val rowId = db.insert(HotelContract.GuestEntry.TABLE_NAME, null, values)
-        val result = (rowId == -1L)
+        val result = (rowId != -1L)
         val message = if (result) {
-            "Ошибка при заведении гостя"
-        }else{
             "Гость заведен под номером $rowId"
+        }else{
+            "Ошибка при заведении гостя"
         }
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show()
         return result
@@ -216,5 +216,10 @@ class EditorActivity : AppCompatActivity() {
             return 1 == deletedRowsCount
         }
         return false
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        hotelDbHelper.close()
     }
 }

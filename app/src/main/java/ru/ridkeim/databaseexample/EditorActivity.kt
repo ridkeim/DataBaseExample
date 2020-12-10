@@ -1,6 +1,7 @@
 package ru.ridkeim.databaseexample
 
 import android.content.ContentValues
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -10,6 +11,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_editor.*
 import kotlinx.android.synthetic.main.toolbar.*
 import ru.ridkeim.databaseexample.data.HotelContract
@@ -26,14 +28,18 @@ class EditorActivity : AppCompatActivity() {
 
     }
 
-    private var mGender = 2
-    private var guestId = -1L
+    private var mGender = HotelContract.GuestEntry.GENDER_UNKNOWN
+    private var guestId = NOT_SAVED_USER_ID
     private val hotelDbHelper = HotelDbHelper(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_editor)
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        fab.setOnClickListener { view ->
+            finishIfSaveIsSuccessful()
+        }
         when(intent.action){
             ACTION_EDIT_GUEST -> {
                 guestId = intent.getLongExtra(KEY_GUEST_ID, NOT_SAVED_USER_ID)
@@ -56,9 +62,7 @@ class EditorActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.action_save -> {
-                if (saveGuest()){
-                    finish()
-                }
+                finishIfSaveIsSuccessful()
                 return true
             }
             R.id.action_delete -> {
@@ -69,6 +73,12 @@ class EditorActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun finishIfSaveIsSuccessful() {
+        if (saveGuest()) {
+            finish()
+        }
     }
 
     private fun setupSpinner() {
@@ -91,7 +101,7 @@ class EditorActivity : AppCompatActivity() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                mGender = 2
+                mGender = HotelContract.GuestEntry.GENDER_UNKNOWN
             }
 
         }
@@ -123,7 +133,7 @@ class EditorActivity : AppCompatActivity() {
                     edit_guest_name.setText(it.getString(columnIndexName))
                     edit_guest_city.setText(it.getString(columnIndexCity))
                     mGender = it.getInt(columnIndexGender)
-                    edit_guest_age.setText(it.getString(columnIndexAge))
+                    edit_guest_age.setText(it.getInt(columnIndexAge).toString())
                 }
             }
             return true

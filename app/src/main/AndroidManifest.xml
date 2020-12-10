@@ -22,7 +22,8 @@
         <activity
             android:name=".EditorActivity"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/Theme.DataBaseExample.NoActionBar"/>
+            android:theme="@style/Theme.DataBaseExample.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
     </application>
 
 </manifest>

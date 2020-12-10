@@ -217,4 +217,9 @@ class EditorActivity : AppCompatActivity() {
         }
         return false
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        hotelDbHelper.close()
+    }
 }

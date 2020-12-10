@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<layout
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="model"
+            type="ru.ridkeim.databaseexample.EditorViewModel" />
+    </data>
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".EditorActivity"
     android:padding="16dp"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
@@ -30,6 +36,7 @@
                 android:id="@+id/edit_guest_name"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/name"
+                android:text="@={model.guest.name}"
                 android:inputType="textCapWords"
                 android:importantForAutofill="no" />
 
@@ -37,6 +44,7 @@
                 android:id="@+id/edit_guest_city"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/city"
+                android:text="@={model.guest.city}"
                 android:inputType="textCapWords"
                 android:importantForAutofill="no" />
         </LinearLayout>
@@ -89,9 +97,11 @@
                 android:id="@+id/edit_guest_age"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/age"
+                android:text="@={model.guest.age}"
                 android:inputType="number"
                 android:importantForAutofill="no" />
 
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>
+</layout>

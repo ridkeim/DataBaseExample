@@ -57,7 +57,6 @@ class CustomRecyclerAdapter(var cursor : Cursor?) : RecyclerView.Adapter<CustomR
             val clickListener = View.OnClickListener { v ->
                 val id = v.tag as Long
                 val editorIntent = Intent(v.context, EditorActivity::class.java).apply {
-                    action = EditorActivity.ACTION_EDIT_GUEST
                     putExtra(EditorActivity.KEY_GUEST_ID, id)
                 }
                 v.context.startActivity(editorIntent)

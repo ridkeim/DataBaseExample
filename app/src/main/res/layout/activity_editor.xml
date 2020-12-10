@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".EditorActivity">
+        <data>
+            <variable
+                name="model"
+                type="ru.ridkeim.databaseexample.EditorViewModel" />
+        </data>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <include layout="@layout/toolbar" />
-    <include layout="@layout/content_editor" />
+    <include layout="@layout/toolbar"
+        android:id="@+id/shared_appbar_layout"/>
+    <include layout="@layout/content_editor"
+        android:id="@+id/content_editor"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -16,5 +24,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:contentDescription="@string/add"
+        android:onClick="@{()->model.save()}"
         app:srcCompat="@android:drawable/ic_menu_save" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

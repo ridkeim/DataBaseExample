@@ -20,7 +20,6 @@ import ru.ridkeim.databaseexample.adapter.CustomRecyclerAdapter
 import ru.ridkeim.databaseexample.data.HotelContract.GuestEntry
 import ru.ridkeim.databaseexample.data.HotelDbHelper
 
-
 class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor>{
     private lateinit var recyclerAdapter: CustomRecyclerAdapter
     private lateinit var dbHelper : SQLiteOpenHelper

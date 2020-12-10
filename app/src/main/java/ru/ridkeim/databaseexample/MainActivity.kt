@@ -49,16 +49,8 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor>{
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.action_inserts -> {
+            R.id.action_insert_test_record -> {
                 insertTestGuest()
-                return true
-            }
-            R.id.action_settings -> {
-                val editorIntent = Intent(this, EditorActivity::class.java).apply {
-                    action = EditorActivity.ACTION_EDIT_GUEST
-                    putExtra(EditorActivity.KEY_GUEST_ID, 5L)
-                }
-                startActivity(editorIntent)
                 return true
             }
         }

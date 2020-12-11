@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
@@ -19,25 +20,35 @@ import kotlinx.android.synthetic.main.toolbar.*
 import ru.ridkeim.databaseexample.adapter.CustomRecyclerAdapter
 import ru.ridkeim.databaseexample.data.HotelContract.GuestEntry
 import ru.ridkeim.databaseexample.data.HotelDbHelper
+import ru.ridkeim.databaseexample.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor>{
-    private lateinit var recyclerAdapter: CustomRecyclerAdapter
-    private lateinit var dbHelper : SQLiteOpenHelper
+
+    private val amBinding: ActivityMainBinding by lazy {
+        DataBindingUtil.setContentView(this,R.layout.activity_main)
+    }
+
+    private val dbHelper : SQLiteOpenHelper by lazy {
+        HotelDbHelper(this)
+    }
+
+    private val loaderManager: LoaderManager by lazy {
+        LoaderManager.getInstance(this)
+    }
+    private val recyclerAdapter: CustomRecyclerAdapter = CustomRecyclerAdapter(null)
     private val loaderId = 42
-    private lateinit var loaderManager: LoaderManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
-        fab.setOnClickListener { view ->
+        setSupportActionBar(amBinding.sharedAppbarLayout.toolbar)
+        amBinding.fab.setOnClickListener { view ->
             val editorIntent = Intent(this, EditorActivity::class.java)
             startActivity(editorIntent)
         }
-        dbHelper = HotelDbHelper(this)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerAdapter = CustomRecyclerAdapter(null)
-        recyclerView.adapter = recyclerAdapter
-        loaderManager = LoaderManager.getInstance(this)
+        amBinding.contentMain.recyclerView.also {
+            it.layoutManager = LinearLayoutManager(this)
+            it.adapter = recyclerAdapter
+        }
         loaderManager.initLoader(loaderId, null, this)
     }
 
@@ -83,7 +94,6 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor>{
     override fun onLoaderReset(loader: Loader<Cursor>) {
         recyclerAdapter.swapCursor(null)
     }
-
 
     class MyCursorLoader(context: Context, private val dbHelper: SQLiteOpenHelper) : CursorLoader(context) {
 

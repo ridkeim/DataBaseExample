@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.list_item.view.*
 import ru.ridkeim.databaseexample.EditorActivity
 import ru.ridkeim.databaseexample.R
 import ru.ridkeim.databaseexample.data.HotelContract

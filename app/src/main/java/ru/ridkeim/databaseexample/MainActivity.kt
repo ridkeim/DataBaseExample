@@ -14,9 +14,6 @@ import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.toolbar.*
 import ru.ridkeim.databaseexample.adapter.CustomRecyclerAdapter
 import ru.ridkeim.databaseexample.data.HotelContract.GuestEntry
 import ru.ridkeim.databaseexample.data.HotelDbHelper

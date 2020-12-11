@@ -8,50 +8,41 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.ridkeim.databaseexample.EditorActivity
 import ru.ridkeim.databaseexample.R
+import ru.ridkeim.databaseexample.data.Guest
 import ru.ridkeim.databaseexample.data.HotelContract
 import ru.ridkeim.databaseexample.databinding.ListItemBinding
 
 class CustomRecyclerAdapter(var cursor : Cursor?) : RecyclerView.Adapter<CustomRecyclerAdapter.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    private var data : List<Guest> = Guest.loadAllFrom(cursor)
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return  ViewHolder.from(parent)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        cursor?.moveToPosition(position)
-        return holder.bind(cursor)
+        return holder.bind(data[position])
     }
 
     override fun getItemCount(): Int {
-        return cursor?.count ?: 0
+        return data.size
     }
 
     class ViewHolder private constructor(val itemBinding: ListItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
-        fun bind(cursor : Cursor?){
-            cursor?.let {
-                val columnIndexId = it.getColumnIndex(HotelContract.GuestEntry._ID)
-                val columnIndexName = it.getColumnIndex(HotelContract.GuestEntry.COLUMN_NAME)
-                val columnIndexCity = it.getColumnIndex(HotelContract.GuestEntry.COLUMN_CITY)
-                val columnIndexGender = it.getColumnIndex(HotelContract.GuestEntry.COLUMN_GENDER)
-                val columnIndexAge = it.getColumnIndex(HotelContract.GuestEntry.COLUMN_AGE)
-                val resources = itemView.resources
-                itemBinding.itemName.text = resources.getString(R.string.item_name,
-                        it.getString(columnIndexName))
-                itemBinding.itemCity.text = resources.getString(R.string.item_city,
-                        it.getString(columnIndexCity))
-                itemBinding.itemAge.text = resources.getString(R.string.item_age,
-                        it.getInt(columnIndexAge).toString())
-                itemBinding.root.tag = it.getLong(columnIndexId)
-                val gender = when(it.getInt(columnIndexGender)){
-                    HotelContract.GuestEntry.GENDER_MALE -> resources.getString(R.string.gender_male)
-                    HotelContract.GuestEntry.GENDER_FEMALE -> resources.getString(R.string.gender_female)
-                    else -> resources.getString(R.string.gender_unknown)
-                }
-                itemBinding.itemGender.text = resources.getString(R.string.item_gender,gender)
-                itemBinding.root.setOnClickListener(clickListener)
+        fun bind(item : Guest){
+            val resources = itemBinding.root.resources
+            itemBinding.itemName.text = resources.getString(R.string.item_name,item.name)
+            itemBinding.itemCity.text = resources.getString(R.string.item_city,item.city)
+            itemBinding.itemAge.text = resources.getString(R.string.item_age,item.age)
+            itemBinding.root.tag = item.id
+            val gender = when(item.gender){
+                HotelContract.GuestEntry.GENDER_MALE -> resources.getString(R.string.gender_male)
+                HotelContract.GuestEntry.GENDER_FEMALE -> resources.getString(R.string.gender_female)
+                else -> resources.getString(R.string.gender_unknown)
             }
+            itemBinding.itemGender.text = resources.getString(R.string.item_gender,gender)
+            itemBinding.root.setOnClickListener(clickListener)
         }
 
         companion object{
@@ -77,6 +68,7 @@ class CustomRecyclerAdapter(var cursor : Cursor?) : RecyclerView.Adapter<CustomR
         }
         this.cursor?.close()
         this.cursor = cursor
+        data = Guest.loadAllFrom(cursor)
         notifyDataSetChanged()
     }
 }

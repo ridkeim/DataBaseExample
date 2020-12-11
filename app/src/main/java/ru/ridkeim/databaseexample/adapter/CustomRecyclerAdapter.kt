@@ -12,9 +12,9 @@ import ru.ridkeim.databaseexample.data.Guest
 import ru.ridkeim.databaseexample.data.HotelContract
 import ru.ridkeim.databaseexample.databinding.ListItemBinding
 
-class CustomRecyclerAdapter(var cursor : Cursor?) : RecyclerView.Adapter<CustomRecyclerAdapter.ViewHolder>() {
+class CustomRecyclerAdapter() : RecyclerView.Adapter<CustomRecyclerAdapter.ViewHolder>() {
 
-    private var data : List<Guest> = Guest.loadAllFrom(cursor)
+    private var data : List<Guest> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return  ViewHolder.from(parent)
@@ -62,13 +62,8 @@ class CustomRecyclerAdapter(var cursor : Cursor?) : RecyclerView.Adapter<CustomR
         }
     }
 
-    fun swapCursor(cursor : Cursor?){
-        if(this.cursor == cursor){
-            return
-        }
-        this.cursor?.close()
-        this.cursor = cursor
-        data = Guest.loadAllFrom(cursor)
+    fun submitList(data: List<Guest>?) {
+        this.data = data ?: emptyList<Guest>()
         notifyDataSetChanged()
     }
 }

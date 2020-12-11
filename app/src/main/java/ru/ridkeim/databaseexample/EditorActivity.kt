@@ -14,38 +14,33 @@ import ru.ridkeim.databaseexample.data.HotelContract
 import ru.ridkeim.databaseexample.databinding.ActivityEditorBinding
 
 class EditorActivity : AppCompatActivity() {
-
     companion object{
         private const val NOT_SAVED_USER_ID = -1L
         const val KEY_GUEST_ID = "guest_id"
-
     }
-
     private var guestId = NOT_SAVED_USER_ID
-    private lateinit var viewModel: EditorViewModel
+    private val viewModel: EditorViewModel by viewModels {
+        EditorViewModel.EditorViewModelFactory(guestId,application)
+    }
     private lateinit var aeBinding: ActivityEditorBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         aeBinding =
-            DataBindingUtil.setContentView<ActivityEditorBinding>(this, R.layout.activity_editor)
+            DataBindingUtil.setContentView(this, R.layout.activity_editor)
         setSupportActionBar(aeBinding.sharedAppbarLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         guestId = intent.getLongExtra(KEY_GUEST_ID, NOT_SAVED_USER_ID)
-        val model : EditorViewModel by viewModels {
-            EditorViewModel.EditorViewModelFactory(guestId,application)
-        }
-        viewModel = model
-        aeBinding.model = model
-        aeBinding.contentEditor.model = model
+        aeBinding.model = viewModel
+        aeBinding.contentEditor.model = viewModel
         aeBinding.lifecycleOwner = this
-        model.showMessage.observe(this){
+        viewModel.showMessage.observe(this){
             if(it) {
-                Toast.makeText(this,model.message.value,Toast.LENGTH_SHORT).show()
-                model.messageShown()
+                Toast.makeText(this,viewModel.message.value,Toast.LENGTH_SHORT).show()
+                viewModel.messageShown()
             }
         }
-        model.dataStateSaved.observe(this){
+        viewModel.dataStateSaved.observe(this){
             if(it){
                 finish()
             }

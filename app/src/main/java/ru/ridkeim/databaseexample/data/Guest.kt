@@ -49,6 +49,28 @@ class Guest(var id : Long) {
             return values
         }
 
+        fun loadAllFrom(cursor : Cursor?) : List<Guest>{
+            val list = mutableListOf<Guest>()
+            cursor?.use {
+                val columnIndexId = it.getColumnIndex(HotelContract.GuestEntry._ID)
+                val columnIndexName = it.getColumnIndex(HotelContract.GuestEntry.COLUMN_NAME)
+                val columnIndexCity = it.getColumnIndex(HotelContract.GuestEntry.COLUMN_CITY)
+                val columnIndexGender = it.getColumnIndex(HotelContract.GuestEntry.COLUMN_GENDER)
+                val columnIndexAge = it.getColumnIndex(HotelContract.GuestEntry.COLUMN_AGE)
+                while (cursor.moveToNext()){
+                    list.add(
+                        Guest(it.getLong(columnIndexId)).apply {
+                            name = it.getString(columnIndexName)
+                            city = it.getString(columnIndexCity)
+                            gender = it.getInt(columnIndexGender)
+                            age = it.getInt(columnIndexAge).toString()
+                        }
+                    )
+                }
+            }
+            return list
+        }
+
 
     }
 }

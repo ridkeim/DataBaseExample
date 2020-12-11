@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">DataBaseExample</string>
-    <string name="action_settings">Настройки</string>
     <string name="action_save">Сохранить</string>
     <string name="action_delete">Удалить</string>
     <string name="action_insert">Вставить</string>
@@ -18,7 +17,14 @@
     <string name="item_age">Возраст: %s</string>
     <string name="item_name">Имя: %s</string>
     <string name="item_city">Город: %s</string>
-
+    <string name="message_confused1">Эмм…</string>
+    <string name="message_confused2">Как ты сюда попал?</string>
+    <string name="message_record_has_not_been_removed">Запись не удалена</string>
+    <string name="message_record_has_been_removed">Запись удалена</string>
+    <string name="message_record_has_not_been_added">Запись не добавлена</string>
+    <string name="message_record_has_been_added_with_Id">Добавлена запись с номером %d</string>
+    <string name="message_record_has_been_updated">Запись обновлена</string>
+    <string name="message_record_has_not_been_updated">Запись не обновлена</string>
     <string-array name="array_gender_options">
         <item>@string/gender_female</item>
         <item>@string/gender_male</item>

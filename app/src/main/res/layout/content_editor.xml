@@ -36,6 +36,7 @@
                 android:id="@+id/edit_guest_name"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/name"
+                android:enabled="@{model.dataStateLoaded}"
                 android:text="@={model.guest.name}"
                 android:inputType="textCapWords"
                 android:importantForAutofill="no" />
@@ -44,6 +45,7 @@
                 android:id="@+id/edit_guest_city"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/city"
+                android:enabled="@{model.dataStateLoaded}"
                 android:text="@={model.guest.city}"
                 android:inputType="textCapWords"
                 android:importantForAutofill="no" />
@@ -97,6 +99,7 @@
                 android:id="@+id/edit_guest_age"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/age"
+                android:enabled="@{model.dataStateLoaded}"
                 android:text="@={model.guest.age}"
                 android:inputType="number"
                 android:importantForAutofill="no" />

@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import kotlinx.android.synthetic.main.content_editor.*
@@ -21,13 +22,13 @@ class EditorActivity : AppCompatActivity() {
 
     }
 
-    private var mGender = HotelContract.GuestEntry.GENDER_UNKNOWN
     private var guestId = NOT_SAVED_USER_ID
     private lateinit var viewModel: EditorViewModel
+    private lateinit var aeBinding: ActivityEditorBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val aeBinding =
+        aeBinding =
             DataBindingUtil.setContentView<ActivityEditorBinding>(this, R.layout.activity_editor)
         setSupportActionBar(aeBinding.sharedAppbarLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -39,6 +40,12 @@ class EditorActivity : AppCompatActivity() {
         aeBinding.model = model
         aeBinding.contentEditor.model = model
         aeBinding.lifecycleOwner = this
+        model.showMessage.observe(this){
+            if(it) {
+                Toast.makeText(this,model.message.value,Toast.LENGTH_SHORT).show()
+                model.messageShown()
+            }
+        }
         model.dataStateSaved.observe(this){
             if(it){
                 finish()
@@ -73,19 +80,28 @@ class EditorActivity : AppCompatActivity() {
             android.R.layout.simple_spinner_item
         )
         genderSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
-        spinner_gender.adapter = genderSpinnerAdapter
-        spinner_gender.setSelection(mGender)
-        spinner_gender.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                mGender = position
+        aeBinding.contentEditor.spinnerGender.apply {
+            adapter = genderSpinnerAdapter
+            setSelection(HotelContract.GuestEntry.GENDER_UNKNOWN)
+            isEnabled = false
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    viewModel.updateGender(position)
+                }
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    viewModel.updateGender(HotelContract.GuestEntry.GENDER_UNKNOWN)
+                }
             }
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                mGender = HotelContract.GuestEntry.GENDER_UNKNOWN
+            viewModel.dataStateLoaded.observe(this@EditorActivity){
+                if(it){
+                    setSelection(viewModel.guest.value?.gender ?: HotelContract.GuestEntry.GENDER_UNKNOWN)
+                    isEnabled = true
+                }
             }
         }
     }

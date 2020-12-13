@@ -6,61 +6,35 @@ import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 import ru.ridkeim.databaseexample.data.Guest
+import ru.ridkeim.databaseexample.data.GuestDatabaseDao
 import ru.ridkeim.databaseexample.data.HotelContract
 import ru.ridkeim.databaseexample.data.HotelDbHelper
 
-class MainViewModel(app : Application) : AndroidViewModel(app), LifecycleObserver {
+class MainViewModel(private val database: GuestDatabaseDao, app : Application) : AndroidViewModel(app){
     private val tag = MainViewModel::class.simpleName
-    private val dbHelper : HotelDbHelper = HotelDbHelper(app)
-    private val _list = MutableLiveData<List<Guest>>()
-    val list : LiveData<List<Guest>>
-        get() =_list
+    val list : LiveData<List<Guest>> = database.getAllGuests()
 
-    private fun loadAllGuest() : List<Guest>{
-        val db = dbHelper.readableDatabase
-        val cursor = db.query(
-            HotelContract.GuestEntry.TABLE_NAME,
-            Guest.projection,
-            null,null,
-            null, null, null
+    fun insertTestGuest() {
+        val guest = Guest(
+            name = "Мурзик",
+            gender = HotelContract.GuestEntry.GENDER_MALE,
+            age = 7,
+            city = "Мурмянск"
         )
-        val guests = Guest.loadAllFrom(cursor)
-        Log.d(tag, "guests loaded guest=$guests, this=$this")
-        return guests
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun loadData(){
         viewModelScope.launch {
-            val loadedGuests = loadAllGuest()
-            _list.postValue(loadedGuests)
+            database.insert(guest)
         }
     }
 
-    fun insertTestGuest() {
-        val db = dbHelper.writableDatabase
-        val values = ContentValues()
-        values.put(HotelContract.GuestEntry.COLUMN_NAME, "Мурзик")
-        values.put(HotelContract.GuestEntry.COLUMN_CITY, "Мурманск")
-        values.put(HotelContract.GuestEntry.COLUMN_GENDER, HotelContract.GuestEntry.GENDER_MALE)
-        values.put(HotelContract.GuestEntry.COLUMN_AGE, 7)
-        db.insert(HotelContract.GuestEntry.TABLE_NAME, null, values)
-        loadData()
-    }
-
-    override fun onCleared() {
-        dbHelper.close()
-        super.onCleared()
-    }
-
-    class MainViewModelFactory(val app : Application) : ViewModelProvider.AndroidViewModelFactory(app){
+    class MainViewModelFactory(
+        private val dataSource : GuestDatabaseDao,
+        private val app : Application) : ViewModelProvider.Factory{
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if(modelClass.isAssignableFrom(MainViewModel::class.java)){
-                return MainViewModel(app) as T
+                return MainViewModel(dataSource,app) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
-
 }

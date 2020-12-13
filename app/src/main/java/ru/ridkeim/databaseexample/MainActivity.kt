@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.ridkeim.databaseexample.adapter.CustomRecyclerAdapter
+import ru.ridkeim.databaseexample.data.GuestDatabase
 import ru.ridkeim.databaseexample.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(){
@@ -17,7 +18,8 @@ class MainActivity : AppCompatActivity(){
         DataBindingUtil.setContentView(this,R.layout.activity_main)
     }
     private val viewModel : MainViewModel by viewModels {
-        MainViewModel.MainViewModelFactory(application)
+        val dataSource = GuestDatabase.getInstance(application).guestDatabaseDao
+        MainViewModel.MainViewModelFactory(dataSource,application)
     }
 
     private lateinit var recyclerAdapter: CustomRecyclerAdapter
@@ -38,7 +40,6 @@ class MainActivity : AppCompatActivity(){
         viewModel.list.observe(this){
             recyclerAdapter.submitList(it)
         }
-        lifecycle.addObserver(viewModel)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

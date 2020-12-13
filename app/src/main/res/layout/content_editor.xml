@@ -7,7 +7,7 @@
     <data>
         <variable
             name="model"
-            type="ru.ridkeim.databaseexample.EditorViewModel" />
+            type="ru.ridkeim.databaseexample.EditorViewModel"/>
     </data>
 <LinearLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -100,9 +100,9 @@
                 style="@style/EditorFieldStyle"
                 android:hint="@string/age"
                 android:enabled="@{model.dataStateLoaded}"
-                android:text="@={model.guest.age}"
                 android:inputType="number"
-                android:importantForAutofill="no" />
+                android:importantForAutofill="no"
+                />
 
         </RelativeLayout>
     </LinearLayout>

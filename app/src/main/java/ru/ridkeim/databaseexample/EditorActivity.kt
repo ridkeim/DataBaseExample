@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
+import ru.ridkeim.databaseexample.data.GuestDatabase
 import ru.ridkeim.databaseexample.data.HotelContract
 import ru.ridkeim.databaseexample.databinding.ActivityEditorBinding
 
@@ -20,7 +21,8 @@ class EditorActivity : AppCompatActivity() {
     }
     private var guestId = NOT_SAVED_USER_ID
     private val viewModel: EditorViewModel by viewModels {
-        EditorViewModel.EditorViewModelFactory(guestId,application)
+        val dataSource = GuestDatabase.getInstance(application).guestDatabaseDao
+        EditorViewModel.EditorViewModelFactory(guestId,dataSource,application)
     }
     private lateinit var aeBinding: ActivityEditorBinding
 

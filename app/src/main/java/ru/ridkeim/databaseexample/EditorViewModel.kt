@@ -1,20 +1,20 @@
 package ru.ridkeim.databaseexample
 
 import android.app.Application
-import android.os.Build
 import android.util.Log
 import androidx.lifecycle.*
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.ridkeim.databaseexample.data.Guest
+import ru.ridkeim.databaseexample.data.GuestDatabaseDao
 import ru.ridkeim.databaseexample.data.HotelContract
-import ru.ridkeim.databaseexample.data.HotelDbHelper
 
-class EditorViewModel private constructor(private val guestId : Long, private val app : Application) : AndroidViewModel(app) {
+class EditorViewModel private constructor(
+    private val guestId : Long,
+    private val database : GuestDatabaseDao,
+    app : Application) : AndroidViewModel(app) {
 
     private val tag = EditorViewModel::class.simpleName
-    private val dbHelper : HotelDbHelper = HotelDbHelper(app)
-
+    private val isNewUser = (-1L == guestId)
     private val _dataStateSaved = MutableLiveData(false)
     val dataStateSaved : LiveData<Boolean>
         get() = _dataStateSaved
@@ -32,30 +32,9 @@ class EditorViewModel private constructor(private val guestId : Long, private va
         get() = _message
 
     val guest = liveData {
-        val data = loadGuest(guestId)
-        emit(data)
+        val data = database.get(guestId)
+        emit(data ?: Guest())
         _dataStateLoaded.postValue(true)
-    }
-
-    private suspend fun loadGuest(guestId: Long) : Guest{
-        return if(guestId != -1L) {
-            if(BuildConfig.DEBUG){
-                delay(2000)
-            }
-            val db = dbHelper.readableDatabase
-            val cursor = db.query(
-                    HotelContract.GuestEntry.TABLE_NAME,
-                    Guest.projection,
-                    "${HotelContract.GuestEntry._ID}=?",
-                    arrayOf(guestId.toString()),
-                    null, null, null
-            )
-            val guest = Guest.from(cursor)
-            Log.d(tag, "guest _dataStatePosted guest=$guest, this=$this")
-            guest
-        } else{
-            Guest(-1L)
-        }
     }
 
     fun save(){
@@ -71,63 +50,51 @@ class EditorViewModel private constructor(private val guestId : Long, private va
 
     private fun updateGuest() {
         viewModelScope.launch {
-            val db = dbHelper.writableDatabase
-            val values = guest.value?.let {
-                Guest.toContentValues(it)
+            guest.value?.let {
+                database.update(it)
+                _dataStateSaved.postValue(true)
             }
-            val updatedRowsCount = db.update(HotelContract.GuestEntry.TABLE_NAME,
-                    values,
-                    "${HotelContract.GuestEntry._ID}=?",
-                    arrayOf(guestId.toString())
-            )
-            val message = when(updatedRowsCount){
-
-                1 -> app.getString(R.string.message_record_has_been_updated)
-                0 -> app.getString(R.string.message_record_has_not_been_updated)
-                else -> app.getString(R.string.message_confused2)
-            }
-            showMessage(message)
-            _dataStateSaved.postValue(1 == updatedRowsCount)
+//            val message = when(updatedRowsCount){
+//                1 -> app.getString(R.string.message_record_has_been_updated)
+//                0 -> app.getString(R.string.message_record_has_not_been_updated)
+//                else -> app.getString(R.string.message_confused2)
+//            }
+//            showMessage(message)
             Log.d(tag, "update _dataStatePosted $this")
         }
     }
 
     private fun insertGuest() {
         viewModelScope.launch {
-            val db = dbHelper.writableDatabase
-            val values = guest.value?.let {
-                Guest.toContentValues(it)
+            guest.value?.let {
+                database.insert(it)
+                _dataStateSaved.postValue(true)
             }
-            val rowId = db.insert(HotelContract.GuestEntry.TABLE_NAME, null, values)
-            val message = when(rowId){
-                -1L -> app.getString(R.string.message_record_has_not_been_added)
-                else -> app.getString(R.string.message_record_has_been_added_with_Id,rowId)
-            }
-            showMessage(message)
-            _dataStateSaved.postValue(-1L != rowId)
+//            val rowId = 1L
+//            val message = when(rowId){
+//                -1L -> app.getString(R.string.message_record_has_not_been_added)
+//                else -> app.getString(R.string.message_record_has_been_added_with_Id,rowId)
+//            }
+//            showMessage(message)
             Log.d(tag, "insert _dataStatePosted $this")
         }
     }
 
     fun remove() {
-        if(guestId != -1L){
+        if(isNewUser){
+            _dataStateSaved.postValue(true)
+        }else{
             viewModelScope.launch {
-                val db = dbHelper.writableDatabase
-                val deletedRowsCount = db.delete(HotelContract.GuestEntry.TABLE_NAME,
-                        "${HotelContract.GuestEntry._ID}=?",
-                        arrayOf(guestId.toString())
-                )
-                val message = when(deletedRowsCount){
-                    1 -> app.getString(R.string.message_record_has_been_removed)
-                    0 -> app.getString(R.string.message_record_has_not_been_removed)
-                    else -> app.getString(R.string.message_confused1)
-                }
-                showMessage(message)
-                _dataStateSaved.postValue(1 == deletedRowsCount)
+//                val deletedRowsCount = 1
+//                val message = when(deletedRowsCount){
+//                    1 -> app.getString(R.string.message_record_has_been_removed)
+//                    0 -> app.getString(R.string.message_record_has_not_been_removed)
+//                    else -> app.getString(R.string.message_confused1)
+//                }
+//                showMessage(message)
+                _dataStateSaved.postValue(true)
                 Log.d(tag, "remove _dataStatePosted $this")
             }
-        }else{
-            _dataStateSaved.postValue(true)
         }
     }
 
@@ -148,15 +115,17 @@ class EditorViewModel private constructor(private val guestId : Long, private va
 
     override fun onCleared() {
         super.onCleared()
-        dbHelper.close()
         Log.d(tag, "onCleared $this")
     }
 
-    class EditorViewModelFactory(private val guestId : Long, val app : Application) : ViewModelProvider.AndroidViewModelFactory(app){
+    class EditorViewModelFactory(
+        private val guestId : Long,
+        private val dataSource : GuestDatabaseDao,
+        val app : Application) : ViewModelProvider.Factory{
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if(modelClass.isAssignableFrom(EditorViewModel::class.java)){
-                return EditorViewModel(guestId,app) as T
+                return EditorViewModel(guestId,dataSource,app) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

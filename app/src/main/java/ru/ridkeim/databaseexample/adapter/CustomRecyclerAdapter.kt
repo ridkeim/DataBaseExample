@@ -1,7 +1,6 @@
 package ru.ridkeim.databaseexample.adapter
 
 import android.content.Intent
-import android.database.Cursor
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,7 @@ import ru.ridkeim.databaseexample.data.Guest
 import ru.ridkeim.databaseexample.data.HotelContract
 import ru.ridkeim.databaseexample.databinding.ListItemBinding
 
-class CustomRecyclerAdapter() : RecyclerView.Adapter<CustomRecyclerAdapter.ViewHolder>() {
+class CustomRecyclerAdapter : RecyclerView.Adapter<CustomRecyclerAdapter.ViewHolder>() {
 
     private var data : List<Guest> = emptyList()
 
@@ -34,8 +33,8 @@ class CustomRecyclerAdapter() : RecyclerView.Adapter<CustomRecyclerAdapter.ViewH
             val resources = itemBinding.root.resources
             itemBinding.itemName.text = resources.getString(R.string.item_name,item.name)
             itemBinding.itemCity.text = resources.getString(R.string.item_city,item.city)
-            itemBinding.itemAge.text = resources.getString(R.string.item_age,item.age)
-            itemBinding.root.tag = item.id
+            itemBinding.itemAge.text = resources.getString(R.string.item_age,item.age.toString())
+            itemBinding.root.tag = item.guestId
             val gender = when(item.gender){
                 HotelContract.GuestEntry.GENDER_MALE -> resources.getString(R.string.gender_male)
                 HotelContract.GuestEntry.GENDER_FEMALE -> resources.getString(R.string.gender_female)

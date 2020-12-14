@@ -79,7 +79,6 @@ class EditorActivity : AppCompatActivity() {
         aeBinding.contentEditor.spinnerGender.apply {
             adapter = genderSpinnerAdapter
             setSelection(Guest.GENDER_UNKNOWN)
-            isEnabled = false
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>?,
@@ -91,12 +90,6 @@ class EditorActivity : AppCompatActivity() {
                 }
                 override fun onNothingSelected(parent: AdapterView<*>?) {
                     viewModel.updateGender(Guest.GENDER_UNKNOWN)
-                }
-            }
-            viewModel.dataStateLoaded.observe(this@EditorActivity){
-                if(it){
-                    setSelection(viewModel.guest.value?.gender ?: Guest.GENDER_UNKNOWN)
-                    isEnabled = true
                 }
             }
         }

@@ -75,6 +75,7 @@
 
             <Spinner
                 android:id="@+id/spinner_gender"
+                android:enabled="@{isLoaded}"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:paddingEnd="16dp"

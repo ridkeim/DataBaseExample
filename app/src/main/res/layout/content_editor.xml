@@ -6,9 +6,13 @@
 
     <data>
         <import type="ru.ridkeim.databaseexample.data.GuestAgeConverter"/>
+        <import type="ru.ridkeim.databaseexample.data.Guest"/>
         <variable
-            name="model"
-            type="ru.ridkeim.databaseexample.EditorViewModel"/>
+            name="isLoaded"
+            type="androidx.lifecycle.LiveData&lt;Boolean&gt;" />
+        <variable
+            name="guest"
+            type="androidx.lifecycle.LiveData&lt;Guest&gt;" />
     </data>
 <LinearLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -37,8 +41,8 @@
                 android:id="@+id/edit_guest_name"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/name"
-                android:enabled="@{model.dataStateLoaded}"
-                android:text="@={model.guest.name}"
+                android:enabled="@{isLoaded}"
+                android:text="@={guest.name}"
                 android:inputType="textCapWords"
                 android:importantForAutofill="no" />
 
@@ -46,8 +50,8 @@
                 android:id="@+id/edit_guest_city"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/city"
-                android:enabled="@{model.dataStateLoaded}"
-                android:text="@={model.guest.city}"
+                android:enabled="@{isLoaded}"
+                android:text="@={guest.city}"
                 android:inputType="textCapWords"
                 android:importantForAutofill="no" />
         </LinearLayout>
@@ -100,10 +104,10 @@
                 android:id="@+id/edit_guest_age"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/age"
-                android:enabled="@{model.dataStateLoaded}"
+                android:enabled="@{isLoaded}"
                 android:inputType="number"
                 android:importantForAutofill="no"
-                android:text="@={model.guest.ageString}"
+                android:text="@={guest.ageString}"
                 />
 
         </RelativeLayout>
@@ -129,10 +133,10 @@
                 android:id="@+id/edit_guest_ageConverter"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/age"
-                android:enabled="@{model.dataStateLoaded}"
+                android:enabled="@{isLoaded}"
                 android:inputType="number"
                 android:importantForAutofill="no"
-                android:text="@={GuestAgeConverter.ageToString(model.guest.age)}"
+                android:text="@={GuestAgeConverter.ageToString(guest.age)}"
                 />
 
         </RelativeLayout>

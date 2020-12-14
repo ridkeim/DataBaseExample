@@ -34,7 +34,6 @@ class EditorActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         guestId = intent.getLongExtra(KEY_GUEST_ID, NOT_SAVED_USER_ID)
         aeBinding.model = viewModel
-        aeBinding.contentEditor.model = viewModel
         aeBinding.lifecycleOwner = this
         viewModel.showMessage.observe(this){
             if(it) {

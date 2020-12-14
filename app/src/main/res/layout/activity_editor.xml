@@ -15,7 +15,9 @@
     <include layout="@layout/toolbar"
         android:id="@+id/shared_appbar_layout"/>
     <include layout="@layout/content_editor"
-        android:id="@+id/content_editor"/>
+        android:id="@+id/content_editor"
+        app:guest="@{model.guest}"
+        app:isLoaded="@{model.dataStateLoaded}"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

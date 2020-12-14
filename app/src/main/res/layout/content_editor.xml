@@ -5,6 +5,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+        <import type="ru.ridkeim.databaseexample.data.GuestAgeConverter"/>
         <variable
             name="model"
             type="ru.ridkeim.databaseexample.EditorViewModel"/>
@@ -70,7 +71,7 @@
 
             <Spinner
                 android:id="@+id/spinner_gender"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:paddingEnd="16dp"
                 android:spinnerMode="dropdown"
@@ -103,6 +104,35 @@
                 android:inputType="number"
                 android:importantForAutofill="no"
                 android:text="@={model.guest.ageString}"
+                />
+
+        </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/container_ageConverter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/CategoryStyle"
+            android:text="@string/age" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:paddingStart="4dp"
+            tools:ignore="RtlSymmetry">
+
+            <EditText
+                android:id="@+id/edit_guest_ageConverter"
+                style="@style/EditorFieldStyle"
+                android:hint="@string/age"
+                android:enabled="@{model.dataStateLoaded}"
+                android:inputType="number"
+                android:importantForAutofill="no"
+                android:text="@={GuestAgeConverter.ageToString(model.guest.age)}"
                 />
 
         </RelativeLayout>

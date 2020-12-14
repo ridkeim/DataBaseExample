@@ -3,6 +3,7 @@ package ru.ridkeim.databaseexample
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.ridkeim.databaseexample.data.Guest
 import ru.ridkeim.databaseexample.data.GuestDatabaseDao
@@ -32,6 +33,9 @@ class EditorViewModel private constructor(
 
     val guest = liveData {
         val data = database.get(guestId)
+        if(BuildConfig.DEBUG){
+            delay(1500)
+        }
         emit(data?:Guest.getInstance())
         _dataStateLoaded.postValue(true)
     }

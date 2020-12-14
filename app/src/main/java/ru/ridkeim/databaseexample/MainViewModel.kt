@@ -5,7 +5,6 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 import ru.ridkeim.databaseexample.data.Guest
 import ru.ridkeim.databaseexample.data.GuestDatabaseDao
-import ru.ridkeim.databaseexample.data.HotelContract
 
 class MainViewModel(private val database: GuestDatabaseDao, app : Application) : AndroidViewModel(app){
 
@@ -14,7 +13,7 @@ class MainViewModel(private val database: GuestDatabaseDao, app : Application) :
     fun insertTestGuest() {
         val guest = Guest(
             name = "Мурзик",
-            gender = HotelContract.GuestEntry.GENDER_MALE,
+            gender = Guest.GENDER_MALE,
             age = 7,
             city = "Мурмянск"
         )

@@ -10,8 +10,8 @@ class Guest(
     var guestId : Long = 0L,
     @ColumnInfo(name = "name")
     var name: String,
-    @ColumnInfo(name = "gender", defaultValue = HotelContract.GuestEntry.GENDER_UNKNOWN.toString())
-    var gender: Int = HotelContract.GuestEntry.GENDER_UNKNOWN,
+    @ColumnInfo(name = "gender", defaultValue = GENDER_UNKNOWN.toString())
+    var gender: Int = GENDER_UNKNOWN,
     @ColumnInfo(name = "age", defaultValue = "0")
     var age: Int,
     @ColumnInfo(name = "city")
@@ -23,7 +23,12 @@ class Guest(
             age = value.toIntOrNull() ?: 0
         }
     companion object {
+        const val GENDER_FEMALE = 0
+        const val GENDER_MALE = 1
+        const val GENDER_UNKNOWN = 2
+
         fun getInstance() : Guest{
+
             return Guest(
                 name = "",
                 city = "",

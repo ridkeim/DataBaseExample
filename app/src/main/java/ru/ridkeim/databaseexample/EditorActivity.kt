@@ -2,7 +2,6 @@ package ru.ridkeim.databaseexample
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -11,8 +10,8 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
+import ru.ridkeim.databaseexample.data.Guest
 import ru.ridkeim.databaseexample.data.GuestDatabase
-import ru.ridkeim.databaseexample.data.HotelContract
 import ru.ridkeim.databaseexample.databinding.ActivityEditorBinding
 
 class EditorActivity : AppCompatActivity() {
@@ -43,6 +42,7 @@ class EditorActivity : AppCompatActivity() {
                 viewModel.messageShown()
             }
         }
+        
         viewModel.dataStateSaved.observe(this){
             if(it){
                 finish()
@@ -79,7 +79,7 @@ class EditorActivity : AppCompatActivity() {
         genderSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
         aeBinding.contentEditor.spinnerGender.apply {
             adapter = genderSpinnerAdapter
-            setSelection(HotelContract.GuestEntry.GENDER_UNKNOWN)
+            setSelection(Guest.GENDER_UNKNOWN)
             isEnabled = false
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -91,12 +91,12 @@ class EditorActivity : AppCompatActivity() {
                     viewModel.updateGender(position)
                 }
                 override fun onNothingSelected(parent: AdapterView<*>?) {
-                    viewModel.updateGender(HotelContract.GuestEntry.GENDER_UNKNOWN)
+                    viewModel.updateGender(Guest.GENDER_UNKNOWN)
                 }
             }
             viewModel.dataStateLoaded.observe(this@EditorActivity){
                 if(it){
-                    setSelection(viewModel.guest.value?.gender ?: HotelContract.GuestEntry.GENDER_UNKNOWN)
+                    setSelection(viewModel.guest.value?.gender ?: Guest.GENDER_UNKNOWN)
                     isEnabled = true
                 }
             }

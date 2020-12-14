@@ -1,19 +1,19 @@
 package ru.ridkeim.databaseexample.data
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 
 @Dao
 interface GuestDatabaseDao {
 
     @Insert
-    suspend fun insert(guest : Guest)
+    suspend fun insert(guest : Guest) : Long
 
     @Update
-    suspend fun update(guest : Guest)
+    suspend fun update(guest : Guest) : Int
+
+    @Delete
+    suspend fun delete(guest: Guest) : Int
 
     @Query("select * from guests where guestId = :id")
     suspend fun get(id : Long) : Guest?

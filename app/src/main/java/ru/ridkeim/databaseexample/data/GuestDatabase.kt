@@ -16,7 +16,7 @@ abstract class GuestDatabase : RoomDatabase() {
         private var INSTANCE : GuestDatabase? = null
 
         fun getInstance(context : Context): GuestDatabase {
-            synchronized(this) {
+            return INSTANCE ?: synchronized(this) {
                 var instance = INSTANCE
                 if(instance == null){
                     instance = Room.databaseBuilder(
@@ -27,7 +27,7 @@ abstract class GuestDatabase : RoomDatabase() {
                         .build()
                     INSTANCE = instance
                 }
-                return instance
+                instance
             }
         }
     }

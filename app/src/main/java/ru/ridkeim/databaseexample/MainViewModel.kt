@@ -1,17 +1,14 @@
 package ru.ridkeim.databaseexample
 
 import android.app.Application
-import android.content.ContentValues
-import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 import ru.ridkeim.databaseexample.data.Guest
 import ru.ridkeim.databaseexample.data.GuestDatabaseDao
 import ru.ridkeim.databaseexample.data.HotelContract
-import ru.ridkeim.databaseexample.data.HotelDbHelper
 
 class MainViewModel(private val database: GuestDatabaseDao, app : Application) : AndroidViewModel(app){
-    private val tag = MainViewModel::class.simpleName
+
     val list : LiveData<List<Guest>> = database.getAllGuests()
 
     fun insertTestGuest() {

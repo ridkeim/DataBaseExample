@@ -102,6 +102,7 @@
                 android:enabled="@{model.dataStateLoaded}"
                 android:inputType="number"
                 android:importantForAutofill="no"
+                android:text="@={model.guest.ageString}"
                 />
 
         </RelativeLayout>

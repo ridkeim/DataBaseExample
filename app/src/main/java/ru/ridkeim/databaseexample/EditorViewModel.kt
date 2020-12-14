@@ -6,12 +6,11 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 import ru.ridkeim.databaseexample.data.Guest
 import ru.ridkeim.databaseexample.data.GuestDatabaseDao
-import ru.ridkeim.databaseexample.data.HotelContract
 
 class EditorViewModel private constructor(
     private val guestId : Long,
     private val database : GuestDatabaseDao,
-    app : Application) : AndroidViewModel(app) {
+    val app : Application) : AndroidViewModel(app) {
 
     private val tag = EditorViewModel::class.simpleName
     private val isNewUser = (-1L == guestId)
@@ -33,7 +32,7 @@ class EditorViewModel private constructor(
 
     val guest = liveData {
         val data = database.get(guestId)
-        emit(data ?: Guest())
+        emit(data?:Guest.getInstance())
         _dataStateLoaded.postValue(true)
     }
 
@@ -41,7 +40,7 @@ class EditorViewModel private constructor(
         if(dataStateLoaded.value == false){
             return
         }
-        if(-1L == guestId){
+        if(isNewUser){
             insertGuest()
         }else{
             updateGuest()
@@ -51,32 +50,29 @@ class EditorViewModel private constructor(
     private fun updateGuest() {
         viewModelScope.launch {
             guest.value?.let {
-                database.update(it)
+                val updatedRowsCount = database.update(it)
                 _dataStateSaved.postValue(true)
+                val message = when(updatedRowsCount){
+                    1 -> app.getString(R.string.message_record_has_been_updated)
+                    0 -> app.getString(R.string.message_record_has_not_been_updated)
+                    else -> app.getString(R.string.message_confused2)
+                }
+                showMessage(message)
             }
-//            val message = when(updatedRowsCount){
-//                1 -> app.getString(R.string.message_record_has_been_updated)
-//                0 -> app.getString(R.string.message_record_has_not_been_updated)
-//                else -> app.getString(R.string.message_confused2)
-//            }
-//            showMessage(message)
-            Log.d(tag, "update _dataStatePosted $this")
         }
     }
 
     private fun insertGuest() {
         viewModelScope.launch {
             guest.value?.let {
-                database.insert(it)
+                val rowId = database.insert(it)
                 _dataStateSaved.postValue(true)
+                val message = when(rowId){
+                    -1L -> app.getString(R.string.message_record_has_not_been_added)
+                    else -> app.getString(R.string.message_record_has_been_added_with_Id,rowId)
+                }
+                showMessage(message)
             }
-//            val rowId = 1L
-//            val message = when(rowId){
-//                -1L -> app.getString(R.string.message_record_has_not_been_added)
-//                else -> app.getString(R.string.message_record_has_been_added_with_Id,rowId)
-//            }
-//            showMessage(message)
-            Log.d(tag, "insert _dataStatePosted $this")
         }
     }
 
@@ -85,15 +81,16 @@ class EditorViewModel private constructor(
             _dataStateSaved.postValue(true)
         }else{
             viewModelScope.launch {
-//                val deletedRowsCount = 1
-//                val message = when(deletedRowsCount){
-//                    1 -> app.getString(R.string.message_record_has_been_removed)
-//                    0 -> app.getString(R.string.message_record_has_not_been_removed)
-//                    else -> app.getString(R.string.message_confused1)
-//                }
-//                showMessage(message)
-                _dataStateSaved.postValue(true)
-                Log.d(tag, "remove _dataStatePosted $this")
+                guest.value?.let {
+                    val deletedRowsCount = database.delete(it)
+                    _dataStateSaved.postValue(true)
+                    val message = when(deletedRowsCount){
+                        1 -> app.getString(R.string.message_record_has_been_removed)
+                        0 -> app.getString(R.string.message_record_has_not_been_removed)
+                        else -> app.getString(R.string.message_confused1)
+                    }
+                    showMessage(message)
+                }
             }
         }
     }
